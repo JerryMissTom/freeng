@@ -1,10 +1,10 @@
 import { CommonModule } from '@angular/common';
 import {
   NgModule, Component, OnInit, Input, Renderer2, OnDestroy,
-  forwardRef, EventEmitter, Output, ElementRef, ViewChild, AfterViewInit
+  forwardRef, EventEmitter, Output, ElementRef, ViewChild, AfterViewInit, HostListener
 } from '@angular/core';
-import {DomRenderer} from '../common/dom';
-import {ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR} from '@angular/forms';
+import { DomRenderer } from '../common/dom';
+import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 const CUSTOM_INPUT_CONTROL_VALUE_ACCESSOR: any = {
   provide: NG_VALUE_ACCESSOR,
@@ -56,13 +56,19 @@ export class InputtextComponent implements ControlValueAccessor, OnInit, AfterVi
   @Input() type: string;
   @Output() onChange: EventEmitter<any> = new EventEmitter();
   @ViewChild('tip') tipViewChild: ElementRef;
+  @ViewChild('text') textViewChild: ElementRef;
   inputClass: object;
   tip: HTMLElement;
   showTip: boolean;
   _theme: string;
   public innerValue: any;
-  public onModelChange: Function = () => {};
-  public onModelTouched: Function = () => {};
+  public onModelChange: Function = () => { };
+  public onModelTouched: Function = () => { };
+
+  @HostListener('window:resize') onResize() {
+    this.setTipLocation();
+  };
+
   constructor(public renderer2: Renderer2, public domRenderer: DomRenderer) {
     this.message = '验证错误!';
     this.type = 'text';
@@ -140,16 +146,8 @@ export class InputtextComponent implements ControlValueAccessor, OnInit, AfterVi
       if (regexp.test(value)) {
         this.remove();
       } else {
-        const left = rect.left + rect.width + 10;
-        const winWidth = window.innerWidth;
-        const tipWidth = this.tip.offsetWidth;
-        this.domRenderer.removeClass(this.tip, 'free-tip-top free-tip-right');
-        let className = 'free-tip-right';
-        if ((left + tipWidth) > winWidth) {
-          className = 'free-tip-top';
-        }
-        this.domRenderer.addClass(this.tip, className);
         this.showTip = true;
+        this.setTipLocation();
       }
     }
     this.onChange.emit({
@@ -158,6 +156,20 @@ export class InputtextComponent implements ControlValueAccessor, OnInit, AfterVi
     });
   }
 
+  setTipLocation() {
+    const rect = this.domRenderer.getRect(this.textViewChild.nativeElement);
+    const left = rect.left + rect.width + 10;
+    const winWidth = window.innerWidth;
+    const tipWidth = this.tip.offsetWidth;
+    this.domRenderer.removeClass(this.tip, 'free-tip-top free-tip-right');
+    let className = 'free-tip-right';
+    if ((left + tipWidth) > winWidth) {
+      className = 'free-tip-top';
+    }
+    this.domRenderer.addClass(this.tip, className);
+  }
+
+
   remove() {
     if (this.tip) {
       this.showTip = false;
@@ -165,7 +177,7 @@ export class InputtextComponent implements ControlValueAccessor, OnInit, AfterVi
   }
 
   ngOnDestroy() {
-   this.remove();
+    this.remove();
   }
 
 }
@@ -176,4 +188,4 @@ export class InputtextComponent implements ControlValueAccessor, OnInit, AfterVi
   exports: [InputtextComponent]
 })
 
-export class InputtextModule {}
+export class InputtextModule { }

@@ -108,8 +108,9 @@
     transition: all .3s;
     backface-visibility: hidden; }
     .free-inputtext .input-field .free-inputtext-tip.free-tip-top {
-      top: -100%;
+      top: -200%;
       left: 50%;
+      text-align: center;
       transform: translate3d(-50%, 1rem, 0); }
       .free-inputtext .input-field .free-inputtext-tip.free-tip-top:before {
         bottom: -1rem;
