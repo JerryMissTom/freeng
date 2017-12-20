@@ -78,8 +78,8 @@
   background: rgba(0, 0, 0, 0.15) !important;
 }
 
-.free-radio.free-primary .free-radio-ins::after,
-.free-radio.free-primary>input:checked+.free-radio-ins {
+.free-primary>input:checked+.free-radio-inner .free-radio-ins::after,
+.free-primary>input:checked+.free-radio-inner .free-radio-ins {
   background: #177bbb;
 }
 
